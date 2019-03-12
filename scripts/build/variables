@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -eu
+
+PLATFORM=${PLATFORM:-}
+VERSION=${VERSION:-"unknown-version"}
+GITCOMMIT=${GITCOMMIT:-$(git rev-parse --short HEAD 2> /dev/null || true)}
+BUILDTIME=${BUILDTIME:-$(date --utc --rfc-3339 ns 2> /dev/null | sed -e 's/ /T/')}
+
+PLATFORM_LDFLAGS=
+if test -n "${PLATFORM}"; then
+	PLATFORM_LDFLAGS="-X \"tushle/cli.PlatformName=${PLATFORM}\""
+fi
+
+export LDFLAGS="\
+    -w \
+    ${PLATFORM_LDFLAGS} \
+    -X \"tushle/cli.GitCommit=${GITCOMMIT}\" \
+    -X \"tushle/cli.BuildTime=${BUILDTIME}\" \
+    -X \"tushle/cli.Version=${VERSION}\" \
+    ${LDFLAGS:-} \
+"
+
+GOOS="${GOOS:-$(go env GOHOSTOS)}"
+GOARCH="${GOARCH:-$(go env GOHOSTARCH)}"
+export TARGET="dist/tushle-$GOOS-$GOARCH"
+export SOURCE="tushle/cmd/tushle"
