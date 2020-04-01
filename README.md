@@ -42,6 +42,10 @@ Flags:
 Use "tushle [command] --help" for more information about a command.
 ```
 
+## CI
+
+TODO
+
 ## License
 
 Tushle is released under the terms of MIT License.
